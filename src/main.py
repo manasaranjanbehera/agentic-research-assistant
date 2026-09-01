@@ -1,7 +1,7 @@
 """CLI entry point: generate a researched, reviewed report on a topic.
 
 Usage:
-    python -m src.main "AWS Bedrock agentic AI patterns"
+    uv run python -m src.main "AWS Bedrock agentic AI patterns"
 
 Requires AWS credentials with Bedrock model access configured in your
 environment (see README.md for setup).
@@ -11,12 +11,12 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from typing import Optional, Sequence
+from collections.abc import Sequence
 
 from .agents import ResearchPipeline
 
 
-def main(argv: Optional[Sequence[str]] = None) -> int:
+def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("topic", help="Topic to research and report on")
     parser.add_argument("--max-revisions", type=int, default=2)

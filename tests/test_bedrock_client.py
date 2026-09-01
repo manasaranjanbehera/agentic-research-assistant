@@ -1,5 +1,6 @@
 """Tests the tool-calling loop against a fake bedrock-runtime client so
 no real AWS credentials or network access are required."""
+import pytest
 from src.bedrock_client import BedrockChatClient
 
 
@@ -27,7 +28,15 @@ def _tool_use_response(tool_use_id, name, tool_input):
         "output": {
             "message": {
                 "role": "assistant",
-                "content": [{"toolUse": {"toolUseId": tool_use_id, "name": name, "input": tool_input}}],
+                "content": [
+                    {
+                        "toolUse": {
+                            "toolUseId": tool_use_id,
+                            "name": name,
+                            "input": tool_input,
+                        }
+                    }
+                ],
             }
         },
         "stopReason": "tool_use",
@@ -92,7 +101,7 @@ def test_run_raises_after_max_tool_rounds():
     fake = FakeBedrockRuntime(responses)
     client = BedrockChatClient(client=fake)
 
-    try:
+    with pytest.raises(RuntimeError, match="max_tool_rounds"):
         client.run(
             system_prompt="sys",
             user_message="hi",
@@ -100,6 +109,3 @@ def test_run_raises_after_max_tool_rounds():
             tool_specs=[{"toolSpec": {"name": "noop"}}],
             max_tool_rounds=3,
         )
-        assert False, "expected RuntimeError"
-    except RuntimeError as exc:
-        assert "max_tool_rounds" in str(exc)

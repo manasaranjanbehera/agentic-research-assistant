@@ -7,7 +7,7 @@ any Converse-API-compatible model available in your account/region.
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable, Optional
+from typing import Any
 
 import boto3
 
@@ -28,7 +28,7 @@ class BedrockChatClient:
     def __init__(
         self,
         model_id: str = DEFAULT_MODEL_ID,
-        region_name: Optional[str] = None,
+        region_name: str | None = None,
         client: Any = None,
     ) -> None:
         self.model_id = model_id
@@ -38,8 +38,8 @@ class BedrockChatClient:
         self,
         system_prompt: str,
         user_message: str,
-        tools: Optional[dict] = None,
-        tool_specs: Optional[list] = None,
+        tools: dict | None = None,
+        tool_specs: list | None = None,
         max_tool_rounds: int = 5,
         temperature: float = 0.3,
     ) -> str:
@@ -47,12 +47,13 @@ class BedrockChatClient:
         tool_config = {"tools": tool_specs} if tool_specs else None
 
         for round_num in range(max_tool_rounds):
-            kwargs = dict(
-                modelId=self.model_id,
-                system=[{"text": system_prompt}],
-                messages=list(messages),  # snapshot: don't hand out a live reference we keep mutating
-                inferenceConfig={"temperature": temperature, "maxTokens": 2048},
-            )
+            # Snapshot messages so converse() does not receive a live mutating reference.
+            kwargs: dict[str, Any] = {
+                "modelId": self.model_id,
+                "system": [{"text": system_prompt}],
+                "messages": list(messages),
+                "inferenceConfig": {"temperature": temperature, "maxTokens": 2048},
+            }
             if tool_config:
                 kwargs["toolConfig"] = tool_config
 

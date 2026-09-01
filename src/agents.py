@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from typing import Optional
 
 from .bedrock_client import BedrockChatClient
 from .tools import TOOL_SPECS, TOOLS
@@ -49,7 +48,7 @@ class PipelineResult:
 
 
 class ResearchPipeline:
-    def __init__(self, client: Optional[BedrockChatClient] = None) -> None:
+    def __init__(self, client: BedrockChatClient | None = None) -> None:
         self.client = client or BedrockChatClient()
 
     def run(self, topic: str, max_revisions: int = 2) -> PipelineResult:
