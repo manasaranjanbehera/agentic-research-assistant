@@ -1,0 +1,11 @@
+AWS Bedrock is a fully managed service that provides access to foundation
+models (FMs) from providers such as Anthropic, Amazon, Meta, and Mistral
+through a single API. It removes the need to manage GPU infrastructure and
+offers the Converse API, a unified interface for text generation, multi-turn
+conversation, and tool use (function calling) that works consistently across
+supported model families. Bedrock also provides Knowledge Bases for
+retrieval-augmented generation (RAG), Agents for orchestrating multi-step
+tool-using workflows, and Guardrails for content filtering, PII redaction,
+and topic denial policies. Pricing is typically on-demand per input/output
+token, with provisioned throughput available for predictable high-volume
+workloads.

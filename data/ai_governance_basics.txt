@@ -1,0 +1,8 @@
+Production AI agent deployments in regulated industries typically require:
+an audit trail of every tool call and model response; PII detection and
+redaction before data leaves a trust boundary; policy checks that block or
+flag disallowed actions before they execute (not just after); and cost and
+usage tracking per agent, per user, or per business unit. These controls are
+usually implemented as a wrapper layer around the model client rather than
+inside the model itself, so they apply consistently regardless of which
+foundation model is swapped in behind the agent.

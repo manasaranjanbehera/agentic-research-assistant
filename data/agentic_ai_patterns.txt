@@ -1,0 +1,10 @@
+Common agentic AI design patterns include: (1) Single-agent tool use, where
+one model repeatedly calls tools until it can answer; (2) Planner-executor,
+where a planning step decomposes a task and an executor agent carries out
+each step; (3) Researcher-summarizer-critic pipelines, where one agent
+gathers information, a second condenses it, and a third reviews the output
+for accuracy before it is returned to the user; and (4) Multi-agent debate
+or voting, where multiple agents propose answers and a judge agent selects
+or merges them. The researcher-summarizer-critic pattern is popular in
+production because the critic step catches unsupported claims before they
+reach an end user, functioning as a lightweight, automated QA gate.
