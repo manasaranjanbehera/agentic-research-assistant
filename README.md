@@ -1,4 +1,4 @@
-# Agentic Research & Reporting Assistant (AWS Bedrock)
+# Multi-Agent Research Assistant (AWS Bedrock)
 
 [![CI](https://github.com/manasaranjanbehera/agentic-research-assistant/actions/workflows/ci.yml/badge.svg)](https://github.com/manasaranjanbehera/agentic-research-assistant/actions/workflows/ci.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -29,6 +29,12 @@ uv run python -m src.main "What agentic AI patterns work well for production sys
 
 ## Architecture
 
+### Target architecture
+
+![Multi-Agent Research Assistant — target architecture](https://github.com/user-attachments/assets/b164553a-9565-4a07-815c-0b799dea7eb6)
+
+### What this repository implements
+
 ```
  topic
    │
@@ -54,13 +60,19 @@ uv run python -m src.main "What agentic AI patterns work well for production sys
   final report
 ```
 
-All three agents are calls to the same `BedrockChatClient`, which wraps the
-Bedrock **Converse API** (`bedrock-runtime.converse`) and implements the
-tool-use request/response loop generically — call the model, if it asks to run
-a tool then run it locally and feed the result back, repeat until it returns
-text. Only the Researcher is given tools in this demo; Summarizer and Critic
-reason purely over text, which keeps the audit trail simple (every tool call
-is visible in `PipelineResult.research_notes`).
+This repository implements the orchestration layer of the architecture above:
+the Researcher, Summarizer and Critic agents on the Bedrock Converse API, tool
+calling, and the revision loop bounded by `max_revisions`. Retrieval sits behind
+a swappable interface — `search_documents` in `src/tools.py` is keyword search
+over `data/*.txt`, replaceable with a Bedrock Knowledge Base or OpenSearch
+without changing pipeline logic.
+
+The enterprise retrieval backends (vector store, knowledge graph), line-of-business
+source systems and observability shown in the target diagram are integration
+points, not included here. Guardrails, policy enforcement and audit are
+implemented separately in
+[agent-guardrail-framework](https://github.com/manasaranjanbehera/agent-guardrail-framework).
+
 
 ## How it works
 
@@ -217,8 +229,9 @@ CI runs the same checks on every push and pull request to `main`.
 - Add a fourth agent (e.g. a "Formatter") or branch into parallel researchers
   for topics that span multiple sources.
 - Wrap each `BedrockChatClient.run()` call with the guardrail layer from the
-  companion project, `../agent-guardrail-framework`, to add policy checks,
-  PII redaction, and cost tracking without changing this project's logic.
+  companion project, [agent-guardrail-framework](https://github.com/manasaranjanbehera/agent-guardrail-framework),
+to add policy checks, PII redaction, and cost tracking without changing
+this project's logic.
 
 ## License
 
